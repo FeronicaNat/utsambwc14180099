@@ -13,5 +13,14 @@
     </ion-toolbar>
   </ion-header>
 
-  <app-explore-container name="Tab 2 page"></app-explore-container>
+  <ion-grid>
+    <ion-row>
+      <ion-col size="6" style="margin-right:auto;margin-left:auto;" *ngFor="let isiFoto of fotoService.temptdata; let counter=index;">
+        <ion-img (click)="opendetail(counter)" [src]="isiFoto.url"></ion-img>
+      </ion-col>
+    </ion-row>
+      
+  </ion-grid>
+
+ 
 </ion-content>

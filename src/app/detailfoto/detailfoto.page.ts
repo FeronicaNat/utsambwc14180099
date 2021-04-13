@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+
+
+import { Component, OnInit } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { FotoserviceService } from '../fotoservice.service';
@@ -11,27 +13,32 @@ import { NavController, Platform, ToastController } from '@ionic/angular';
 const { Camera,Filesystem,Storage } = Plugins;
 
 @Component({
-  selector: 'app-tab1',
-  templateUrl: 'tab1.page.html',
-  styleUrls: ['tab1.page.scss']
+  selector: 'app-detailfoto',
+  templateUrl: './detailfoto.page.html',
+  styleUrls: ['./detailfoto.page.scss'],
 })
-export class Tab1Page {
+export class DetailfotoPage implements OnInit {
 
-  private platform:Platform;
-  public foto; 
+  constructor(private route:ActivatedRoute,public fotoService:FotoserviceService) { }
 
-  constructor(platform:Platform,public afs:AngularFirestore, public fotoService:FotoserviceService,public toastCtrl:ToastController,private route:ActivatedRoute) {
-    this.platform=platform;
+  public paramindex;
+  public foto;
+  public stat:boolean=false;
+
+  ngOnInit() {
+    var isinama=this.route.snapshot.paramMap.get('index');
+    this.paramindex=isinama;
+    
+
   }
-
-  ngOnInit(){
-    this.fotoService.loadFoto();
+  
+  changestat(judulnote,isinote,tanggalnote,nilainote){
+    this.stat=true;
   }
 
   async PilihFoto(){
 
     // this.fotoService.dataadd
-
     this.foto = await Camera.getPhoto({
       resultType : CameraResultType.Uri,
       source : CameraSource.Camera,
@@ -42,9 +49,8 @@ export class Tab1Page {
 
     
     const hasilsimpan=await this.fotoService.simpanFoto(this.foto);
-    this.fotoService.dataFoto.unshift(hasilsimpan);
-    this.fotoService.dataadd.unshift(hasilsimpan);
-
+    // this.fotoService.dataFoto.unshift(hasilsimpan);
+    this.fotoService.dataupdate.unshift(hasilsimpan);
 
     console.log("CEKK "+this.fotoService.dataFoto);
     // Storage.set({
@@ -55,20 +61,9 @@ export class Tab1Page {
    
   }
 
-  TambahNote(judulnote,isinote,tanggalnote,nilainote) {
-    this.fotoService.tambahNote(this.foto,judulnote,isinote,tanggalnote,nilainote);
-    judulnote=null; 
-    isinote=null;
-    tanggalnote=null;
-    nilainote=null;
-
+  updatedata(judulnote,isinote,tanggalnote,nilainote){
+    this.fotoService.updatedata(this.fotoService.dataupdate,judulnote,isinote,tanggalnote,nilainote,this.paramindex);
   }
 
-  // addNewFoto(){
-  //   this.fotoservice.dtFotoBaru = [];
-  //   this.fotoservice.addFoto();
-  //   //this.fotoservice.loadFoto();
-  //   //this.fotoservice.loadFromCapture();
-  // }
 
 }
